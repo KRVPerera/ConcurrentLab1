@@ -16,8 +16,9 @@ LinkedList::~LinkedList () {
     while(x != nil){
         y = x;
         x = x->next;
-        free(y);
+        delete (y);
     }
+    delete (nil);
 }
 
 void LinkedList::Print(){

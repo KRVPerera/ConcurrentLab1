@@ -2,7 +2,6 @@
 // Created by root on 12/6/16.
 //
 
-#include <cstdlib>
 #include "Node.h"
 
 Node::Node () {
@@ -12,8 +11,8 @@ Node::Node () {
 }
 
 Node::~Node () {
-    free(next);
-    free(prev);
+//    delete(next);
+//    delete(prev);
 }
 
 Node::Node (int val) : Node() {

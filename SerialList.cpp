@@ -8,7 +8,7 @@ void SerialList::Delete (int i) {
     Node * x = Member(i);
     x->prev->next = x->next;
     x->next->prev = x->prev;
-    free(x);
+    delete (x);
 }
 
 Node * SerialList::Member (int i) {
