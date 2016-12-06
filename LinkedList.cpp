@@ -5,6 +5,7 @@
 #include "LinkedList.h"
 
 LinkedList::LinkedList(){
-   head = new Node;
-   nil = new Node;
+    nil = new Node;
+    nil->next = nil->prev;
+    nil->prev = nil->next;
 }
