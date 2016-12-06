@@ -8,9 +8,9 @@
 Node::Node () {
     value = NULL;
     next = nullptr;
+    prev = nullptr;
 }
 
-Node::Node (int val, Node * nxt) {
+Node::Node (int val) : Node() {
     value = val;
-    next = nxt;
 }

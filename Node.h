@@ -10,10 +10,11 @@ class Node {
 public:
     Node();
 
-    Node (int val, Node *nxt);
+    Node (int val);
 
     int value;
     Node * next;
+    Node * prev;
 };
 
 
