@@ -12,6 +12,8 @@ public:
 
     Node (int val);
 
+    virtual ~Node ();
+
     int value;
     Node * next;
     Node * prev;

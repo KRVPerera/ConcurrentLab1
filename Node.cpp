@@ -6,9 +6,14 @@
 #include "Node.h"
 
 Node::Node () {
-    value = NULL;
-    next = nullptr;
-    prev = nullptr;
+    value = -1;
+    next = (Node *) nullptr;
+    prev = (Node *) nullptr;
+}
+
+Node::~Node () {
+    free(next);
+    free(prev);
 }
 
 Node::Node (int val) : Node() {
