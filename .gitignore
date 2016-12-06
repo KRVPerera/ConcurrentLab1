@@ -29,9 +29,7 @@
 *.app
 
 # JetBrains IDEs
-# User specific
-.idea/workspace.xml
-.idea/tasks.xml
+.idea/*
 
 #
 *~
