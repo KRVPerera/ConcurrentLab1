@@ -6,11 +6,15 @@
 #define CONCURRENTTHLAB_1_NODE_H
 
 
-
 class Node {
+public:
+    Node();
 
+    Node (int val, Node *nxt);
+
+    int value;
+    Node * next;
 };
-
 
 
 #endif //CONCURRENTTHLAB_1_NODE_H
