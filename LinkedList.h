@@ -11,11 +11,8 @@
 
 class LinkedList {
 public:
-    LinkedList ();
-
-    Node * head;
     Node * nil;
-public:
+    LinkedList ();
     virtual void Delete(int) = 0;
     virtual Node * Member(int) = 0;
     virtual void Insert(int) = 0;

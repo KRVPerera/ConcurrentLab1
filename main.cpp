@@ -15,6 +15,8 @@ int main() {
     list.Print();
 
     list.Delete(6);
+    list.Delete(7);
+    list.Delete(5);
 
     list.Print();
 

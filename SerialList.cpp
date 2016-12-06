@@ -26,3 +26,4 @@ void SerialList::Insert (int i) {
     nil->next = x;
     x->prev = nil;
 }
+
