@@ -9,10 +9,13 @@
 #include "LinkedList.h"
 
 class SerialList : public LinkedList{
+private:
+    Node *Find(int i) override;
+
 public:
     void Delete (int i) override;
 
-    Node * Member (int i) override;
+    bool Member(int i) override;
 
     void Insert (int i) override;
 };
