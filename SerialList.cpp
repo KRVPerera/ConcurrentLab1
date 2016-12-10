@@ -4,6 +4,9 @@
 
 #include "SerialList.h"
 
+SerialList::SerialList() : LinkedList() {}
+
+
 void SerialList::Delete(int i) {
     Node *x = Find(i);
     x->prev->next = x->next;
@@ -49,4 +52,6 @@ int SerialList::Size() {
     }
     return count;
 }
+
+
 

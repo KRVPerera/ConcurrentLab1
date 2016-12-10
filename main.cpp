@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <random>
 #include "SerialList.h"
-#include "MutexList.h"
 
 using namespace std;
 
@@ -12,12 +11,17 @@ using namespace std;
 float elapsed_time_msec(struct timespec *begin, struct timespec *end,
                         unsigned long *sec, unsigned long *nsec);
 
+void populate_list(SerialList *list, int population);
+
+#define POPULATION_MAX 65534 // from 1 : 2**16 - 1 (65535)
+
 // N = (100zs/rx)^2, r - accuracy (5%), s - standard deviation, x - mean, z = 1.960 (95%) - TAKE THE CEIL
 //TODO (krv) : get the sample size from
 int main(int argc, char **argv) {
     // fractions
     float member_frac = 0.50, insert_fract = 0.25, delete_frac = 0.25;
     // Default values
+//    int num_population = 1000; // n
     int num_population = 1000; // n
     int num_operations = 10000; // m
     // Argumetn pasrser variables
@@ -98,7 +102,12 @@ int main(int argc, char **argv) {
     if (member_frac < 0) {
         cerr << "Member fraction is negative!" << endl;
         abort();
+    } else if (num_population >= POPULATION_MAX) { // because list has unique values, cannot exceed POPULATION_MAX
+        cerr << "Population MAX is " << POPULATION_MAX << endl;
+        abort();
     }
+
+
     time_t seed = time(NULL);
     srand(seed); // seed for each iteration , each test use a one seed
     cout << "Population\t\t-n : " << num_population << endl;
@@ -110,21 +119,18 @@ int main(int argc, char **argv) {
     cout << "Threads\t\t\t-t : " << num_threads  << endl;
     cout << "Seed\t\t\t   : " << seed  << endl;
 
-    MutexList list;GET_TIME(t0);
-    list.Insert(5);
-    list.Insert(6);
-    cout << "size 2 : " << list.Size() << endl;
-    list.Insert(7);
-    cout << "size 3 : " << list.Size() << endl;
-    list.Print();GET_TIME(t1);
-    list.Delete(6);
-    list.Delete(5);
+    SerialList list;GET_TIME(t0);
 
-    list.Print();
+    populate_list(&list, num_population);
+    cout << "Size of the list : " << list.Size() << endl;
 
-    bool yes = list.Member(7);
+    GET_TIME(t1);
+
+    bool yes = list.Member(7644);
     if (yes) {
-        cout << 7 << " is a member" << endl;
+        cout << 7644 << " is a member" << endl;
+    } else {
+        cout << 7644 << " is not a member" << endl;
     }
 
 
@@ -138,6 +144,17 @@ int main(int argc, char **argv) {
     comp_time = elapsed_time_msec(&t0, &t1, &sec, &nsec);
     cout << "Elapsed-time(ms) = " << comp_time << endl;
     return 0;
+}
+
+void populate_list(SerialList *list, int population) {
+    while (list->Size() < population) {
+        //int number = rand()%65535+1; // (0, 65535) exclusive range
+        int number = rand() % 65534 + 1; // (0, 65535) exclusive range
+        if (list->Member(number)) {
+            continue;
+        }
+        list->Insert(number);
+    }
 }
 
 float elapsed_time_msec(struct timespec *begin, struct timespec *end,

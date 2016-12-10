@@ -21,6 +21,7 @@ public:
 
     int Size() override;
 
+    SerialList();
 
 };
 
