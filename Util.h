@@ -6,21 +6,18 @@
 #define CONCURRENTTHLAB_1_UTIL_H
 
 #include <vector>
-#include <cmath>
-#include <algorithm>
 
-using namespace std;
 
-static class Util {
+class Util {
 public:
+    static float Mean(std::vector<float> times);
 
+    static float StandardDeviation(std::vector<float> times);
 
-    static double Mean(vector<double> times);
+    static long RequiredSampleSize(float sd, float mean);
 
-    static double StandardDeviation(vector<double> times);
-
-    static long RequiredSampleSize(double sd, double mean);
+    static float
+    elapsed_time_msec(struct timespec *begin, struct timespec *end, unsigned long *sec, unsigned long *nsec);
 };
-
 
 #endif //CONCURRENTTHLAB_1_UTIL_H

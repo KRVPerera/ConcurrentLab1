@@ -2,16 +2,14 @@
 #include <unistd.h>
 #include <random>
 #include "SerialList.h"
+#include "Util.h"
+#include "SerialDriver.h"
 
 using namespace std;
 
 #define GET_TIME(x); if(clock_gettime(CLOCK_MONOTONIC, &(x)) < 0) \
                 {perror("clock_gettime(): ");  exit(EXIT_FAILURE);}
 
-float elapsed_time_msec(struct timespec *begin, struct timespec *end,
-                        unsigned long *sec, unsigned long *nsec);
-
-void populate_list(SerialList *list, int population);
 
 #define POPULATION_MAX 65534 // from 1 : 2**16 - 1 (65535)
 
@@ -119,7 +117,7 @@ int main(int argc, char **argv) {
 
     SerialList list;GET_TIME(t0);
 
-    populate_list(&list, num_population);
+    SerialDriver::populate_list(&list, num_population);
     cout << "Size of the list : " << list.Size() << endl;
 
     GET_TIME(t1);
@@ -139,30 +137,11 @@ int main(int argc, char **argv) {
         cout << "70 is not a member" <<
              endl;
     }
-    comp_time = elapsed_time_msec(&t0, &t1, &sec, &nsec);
+    comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
     cout << "Elapsed-time(ms) = " << comp_time << endl;
     return 0;
 }
 
-void populate_list(SerialList *list, int population) {
-    while (list->Size() < population) {
-        //int number = rand()%65535+1; // (0, 65535) exclusive range
-        int number = rand() % 65534 + 1; // (0, 65535) exclusive range
-        if (list->Member(number)) {
-            continue;
-        }
-        list->Insert(number);
-    }
-}
 
-float elapsed_time_msec(struct timespec *begin, struct timespec *end,
-                        unsigned long *sec, unsigned long *nsec) {
-    if (end->tv_nsec < begin->tv_nsec) {
-        *nsec = 1000000000 - (begin->tv_nsec - end->tv_nsec);
-        *sec = end->tv_sec - begin->tv_sec - 1;
-    } else {
-        *nsec = end->tv_nsec - begin->tv_nsec;
-        *sec = end->tv_sec - begin->tv_sec;
-    }
-    return (float) (*sec) * 1000 + ((float) (*nsec)) / 1000000.0;
-}
+
+
