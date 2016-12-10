@@ -10,17 +10,18 @@
 #include "Node.h"
 
 class LinkedList {
-private:
+protected:
     virtual Node *Find(int) = 0;
-public:
     Node * nil;
+public:
     LinkedList ();
+    void Print();
+    ~LinkedList ();
+
     virtual void Delete(int) = 0;
     virtual void Insert(int) = 0;
-
     virtual bool Member(int) = 0;
-    void Print();
-    virtual ~LinkedList ();
+    virtual int Size() = 0;
 };
 
 

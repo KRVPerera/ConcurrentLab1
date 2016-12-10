@@ -1,6 +1,8 @@
 #include <iostream>
 #include <unistd.h>
+#include <random>
 #include "SerialList.h"
+#include "MutexList.h"
 
 using namespace std;
 
@@ -26,9 +28,10 @@ int main(int argc, char **argv) {
     float comp_time;
     unsigned long sec, nsec;
     // Multi threading variables
-    int num
+    int num_threads = 2;
 
-    while ((c = getopt(argc, argv, "n:m:i:d:")) != -1) {
+    // Reading command line arguments
+    while ((c = getopt(argc, argv, "n:m:i:d:t:")) != -1) {
         switch (c) {
             case 'n':
                 try {
@@ -52,6 +55,14 @@ int main(int argc, char **argv) {
                 } catch (std::logic_error) {
                     cerr << "Inavlid value for -i, set to 0.25" << endl;
                     insert_fract = 0.25;
+                }
+                break;
+            case 't':
+                try {
+                    num_threads = stoi(optarg);
+                } catch (std::logic_error) {
+                    cerr << "Inavlid value for -t, set to 2" << endl;
+                    num_threads = 2;
                 }
                 break;
             case 'd':
@@ -82,24 +93,29 @@ int main(int argc, char **argv) {
         }
     }
 
+    // check the total of fractions
     member_frac = 1 - delete_frac - insert_fract;
     if (member_frac < 0) {
         cerr << "Member fraction is negative!" << endl;
         abort();
     }
+    time_t seed = time(NULL);
+    srand(seed); // seed for each iteration , each test use a one seed
+    cout << "Population\t\t-n : " << num_population << endl;
+    cout << "Operations\t\t-m : " << num_operations << endl;
+    cout << "Operations\t\t-t : " << num_operations << endl;
+    cout << "Member fraction\t   : " << member_frac * 100 << "%" << endl;
+    cout << "Insert fraction\t-i : " << insert_fract * 100 << "%" << endl;
+    cout << "Delete fraction\t-d : " << delete_frac * 100 << "%" << endl;
+    cout << "Threads\t\t\t-t : " << num_threads  << endl;
+    cout << "Seed\t\t\t   : " << seed  << endl;
 
-    cout << "Population   -n : " << num_population << endl;
-    cout << "Operations   -m : " << num_operations << endl;
-    cout << "Operations   -t : " << num_operations << endl;
-    cout << "Memeber frac    : " << member_frac * 100 << "%" << endl;
-    cout << "Insert frac  -i : " << insert_fract * 100 << "%" << endl;
-    cout << "Delete frac  -d : " << delete_frac * 100 << "%" << endl;
-
-    SerialList list;GET_TIME(t0);
+    MutexList list;GET_TIME(t0);
     list.Insert(5);
     list.Insert(6);
+    cout << "size 2 : " << list.Size() << endl;
     list.Insert(7);
-
+    cout << "size 3 : " << list.Size() << endl;
     list.Print();GET_TIME(t1);
     list.Delete(6);
     list.Delete(5);

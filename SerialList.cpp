@@ -4,7 +4,7 @@
 
 #include "SerialList.h"
 
-void SerialList::Delete (int i) {
+void SerialList::Delete(int i) {
     Node *x = Find(i);
     x->prev->next = x->next;
     x->next->prev = x->prev;
@@ -12,8 +12,8 @@ void SerialList::Delete (int i) {
 }
 
 Node *SerialList::Find(int i) {
-    Node * x = nil->next;
-    while(x != nil && x->value != i){
+    Node *x = nil->next;
+    while (x != nil && x->value != i) {
         x = x->next;
     }
     if (x != nil && x->value)
@@ -32,11 +32,21 @@ bool SerialList::Member(int i) {
     }
 }
 
-void SerialList::Insert (int i) {
-    Node * x = new Node(i);
+void SerialList::Insert(int i) {
+    Node *x = new Node(i);
     x->next = nil->next;
     nil->next->prev = x;
     nil->next = x;
     x->prev = nil;
+}
+
+int SerialList::Size() {
+    int count = 0;
+    Node *x = nil->next;
+    while (x != nil) {
+        x = x->next;
+        count++;
+    }
+    return count;
 }
 
