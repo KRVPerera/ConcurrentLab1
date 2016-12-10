@@ -15,16 +15,14 @@ void populate_list(SerialList *list, int population);
 
 #define POPULATION_MAX 65534 // from 1 : 2**16 - 1 (65535)
 
-// N = (100zs/rx)^2, r - accuracy (5%), s - standard deviation, x - mean, z = 1.960 (95%) - TAKE THE CEIL
-//TODO (krv) : get the sample size from
+
 int main(int argc, char **argv) {
     // fractions
     float member_frac = 0.50, insert_fract = 0.25, delete_frac = 0.25;
     // Default values
-//    int num_population = 1000; // n
     int num_population = 1000; // n
     int num_operations = 10000; // m
-    // Argumetn pasrser variables
+    // Argument parser variables
     int c;
     opterr = 0;
     // Time variables
