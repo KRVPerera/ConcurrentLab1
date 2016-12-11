@@ -37,9 +37,6 @@ void SerialDriver::Drive() {
                 cerr << "Invalid number of member calls calculated" << endl;
                 abort();
             }
-//            cout << "Inserts : " << num_insert_f << endl;
-//            cout << "Deletes : " << num_delete_f << endl;
-//            cout << "Member  : " << num_member_f << endl;
 
             SerialList list;
             vector<int> generatedValues; // used to generate unique values
