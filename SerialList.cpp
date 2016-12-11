@@ -9,9 +9,11 @@ SerialList::SerialList() : LinkedList() {}
 
 void SerialList::Delete(int i) {
     Node *x = Find(i);
-    x->prev->next = x->next;
-    x->next->prev = x->prev;
-    delete (x);
+    if (x != nil) {
+        x->prev->next = x->next;
+        x->next->prev = x->prev;
+        delete (x);
+    }
 }
 
 Node *SerialList::Find(int i) {
