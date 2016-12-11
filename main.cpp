@@ -1,8 +1,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <random>
-#include "SerialList.h"
-#include "Util.h"
 #include "SerialDriver.h"
 
 using namespace std;
@@ -16,7 +14,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
     // fractions
-    float member_frac = 0.50, insert_fract = 0.25, delete_frac = 0.25;
+    float member_frac = 0.50, insert_frac = 0.25, delete_frac = 0.25;
     // Default values
     int num_population = 1000; // n
     int num_operations = 10000; // m
@@ -29,9 +27,10 @@ int main(int argc, char **argv) {
     unsigned long sec, nsec;
     // Multi threading variables
     int num_threads = 2;
-
+    bool serial, mutexed, rwlocked;
+    serial = mutexed = rwlocked = false;
     // Reading command line arguments
-    while ((c = getopt(argc, argv, "n:m:i:d:t:")) != -1) {
+    while ((c = getopt(argc, argv, "n:m:i:d:t:s")) != -1) {
         switch (c) {
             case 'n':
                 try {
@@ -51,10 +50,10 @@ int main(int argc, char **argv) {
                 break;
             case 'i':
                 try {
-                    insert_fract = stof(optarg);
+                    insert_frac = stof(optarg);
                 } catch (std::logic_error) {
                     cerr << "Inavlid value for -i, set to 0.25" << endl;
-                    insert_fract = 0.25;
+                    insert_frac = 0.25;
                 }
                 break;
             case 't':
@@ -72,6 +71,9 @@ int main(int argc, char **argv) {
                     cerr << "Inavlid value for -d, set to 0.25" << endl;
                     delete_frac = 0.25;
                 }
+                break;
+            case 's':
+                serial = true;
                 break;
             case '?':
                 if (optopt == 'i') {
@@ -94,7 +96,7 @@ int main(int argc, char **argv) {
     }
 
     // check the total of fractions
-    member_frac = 1 - delete_frac - insert_fract;
+    member_frac = 1 - delete_frac - insert_frac;
     if (member_frac < 0) {
         cerr << "Member fraction is negative!" << endl;
         abort();
@@ -110,35 +112,17 @@ int main(int argc, char **argv) {
     cout << "Operations\t\t-m : " << num_operations << endl;
     cout << "Operations\t\t-t : " << num_operations << endl;
     cout << "Member fraction\t   : " << member_frac * 100 << "%" << endl;
-    cout << "Insert fraction\t-i : " << insert_fract * 100 << "%" << endl;
+    cout << "Insert fraction\t-i : " << insert_frac * 100 << "%" << endl;
     cout << "Delete fraction\t-d : " << delete_frac * 100 << "%" << endl;
     cout << "Threads\t\t\t-t : " << num_threads  << endl;
     cout << "Seed\t\t\t   : " << seed  << endl;
 
-    SerialList list;GET_TIME(t0);
-
-    SerialDriver::populate_list(&list, num_population);
-    cout << "Size of the list : " << list.Size() << endl;
-
-    GET_TIME(t1);
-
-    bool yes = list.Member(7644);
-    if (yes) {
-        cout << 7644 << " is a member" << endl;
-    } else {
-        cout << 7644 << " is not a member" << endl;
+    if (serial) {
+        cout << "Serial\t\t\t   : ON" << endl;
+        SerialDriver s_drive(member_frac, insert_frac, delete_frac);
+        s_drive.Drive();
     }
 
-
-    yes = list.Member(70);
-    if (yes) {
-        cout << 70 << " is a member" << endl;
-    } else {
-        cout << "70 is not a member" <<
-             endl;
-    }
-    comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-    cout << "Elapsed-time(ms) = " << comp_time << endl;
     return 0;
 }
 
