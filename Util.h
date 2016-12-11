@@ -6,6 +6,7 @@
 #define CONCURRENTTHLAB_1_UTIL_H
 
 #include <vector>
+#include <time.h>
 
 
 class Util {
@@ -16,8 +17,12 @@ public:
 
     static long RequiredSampleSize(float sd, float mean);
 
-    static float
-    elapsed_time_msec(struct timespec *begin, struct timespec *end, unsigned long *sec, unsigned long *nsec);
+
+    static float elapsed_time_nsec(timespec *begin, timespec *end, unsigned long *sec, unsigned long *nsec);
+
+    static float elapsed_time_msec(timespec *begin, timespec *end, unsigned long *sec, unsigned long *nsec);
+
+    static float elapsed_time_microsec(timespec *begin, timespec *end, unsigned long *sec, unsigned long *nsec);
 };
 
 #endif //CONCURRENTTHLAB_1_UTIL_H
