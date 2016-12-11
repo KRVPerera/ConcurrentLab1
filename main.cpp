@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <random>
 #include "SerialDriver.h"
+#include "MutexDriver.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ int main(int argc, char **argv) {
     bool serial, mutexed, rwlocked;
     serial = mutexed = rwlocked = false;
     // Reading command line arguments
-    while ((c = getopt(argc, argv, "n:m:i:d:t:s")) != -1) {
+    while ((c = getopt(argc, argv, "n:m:i:d:t:sg")) != -1) {
         switch (c) {
             case 'n':
                 try {
@@ -74,6 +75,9 @@ int main(int argc, char **argv) {
                 break;
             case 's':
                 serial = true;
+                break;
+            case 'g':
+                mutexed = true;
                 break;
             case '?':
                 if (optopt == 'i') {
@@ -122,6 +126,13 @@ int main(int argc, char **argv) {
         SerialDriver s_drive(member_frac, insert_frac, delete_frac);
         s_drive.Drive();
     }
+
+    if (mutexed) {
+        cout << "Mutex\t\t\t   : ON" << endl;
+        MutexDriver m_drive(member_frac, insert_frac, delete_frac);
+        m_drive.Drive();
+    }
+
 
     return 0;
 }
