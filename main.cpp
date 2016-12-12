@@ -118,7 +118,6 @@ int main(int argc, char **argv) {
     srand(seed); // seed for each iteration , each test use a one seed
     cout << "Population\t\t-n : " << num_population << endl;
     cout << "Operations\t\t-m : " << num_operations << endl;
-    cout << "Operations\t\t-t : " << num_operations << endl;
     cout << "Member fraction\t   : " << member_frac * 100 << "%" << endl;
     cout << "Insert fraction\t-i : " << insert_frac * 100 << "%" << endl;
     cout << "Delete fraction\t-d : " << delete_frac * 100 << "%" << endl;
@@ -138,7 +137,7 @@ int main(int argc, char **argv) {
     }
 
     if (rwlocked) {
-        cout << "Mutex\t\t\t   : ON" << endl;
+        cout << "RW\t\t\t\t   : ON" << endl;
         ReadWriteDriver r_drive(member_frac, insert_frac, delete_frac);
         r_drive.Drive();
     }

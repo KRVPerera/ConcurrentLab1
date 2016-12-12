@@ -5,7 +5,7 @@
 #ifndef CONCURRENTTHLAB_1_READWRITELIST_H
 #define CONCURRENTTHLAB_1_READWRITELIST_H
 
-#include "SerialDriver.h"
+#include "SerialList.h"
 #include <pthread.h>
 
 class ReadWriteList : public SerialList{

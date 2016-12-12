@@ -5,7 +5,7 @@
 #ifndef CONCURRENTTHLAB_1_SERIALDRIVER_H
 #define CONCURRENTTHLAB_1_SERIALDRIVER_H
 
-
+#include <vector>
 #include "SerialList.h"
 
 class SerialDriver {
