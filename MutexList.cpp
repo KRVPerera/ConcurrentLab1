@@ -40,6 +40,11 @@ void MutexList::Insert(int i) {
 
 void MutexList::Delete(int i) {
     pthread_mutex_lock(&glb_mutex);
-    SerialList::Delete(i);
+    Node *x = SerialList::Find(i);
+    if (x != nil) {
+        x->prev->next = x->next;
+        x->next->prev = x->prev;
+        delete (x);
+    }
     pthread_mutex_unlock(&glb_mutex);
 }

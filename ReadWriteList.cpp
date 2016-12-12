@@ -40,6 +40,11 @@ void ReadWriteList::Insert(int i) {
 
 void ReadWriteList::Delete(int i) {
     pthread_rwlock_wrlock(&glb_rwlock);
-    SerialList::Delete(i);
+    Node *x = SerialList::Find(i);
+    if (x != nil) {
+        x->prev->next = x->next;
+        x->next->prev = x->prev;
+        delete (x);
+    }
     pthread_rwlock_unlock(&glb_rwlock);
 }
