@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
 
     if (rwlocked) {
         cout << "RW\t\t\t\t   : ON" << endl;
-        ReadWriteDriver r_drive(member_frac, insert_frac, delete_frac);
+        ReadWriteDriver r_drive(member_frac, insert_frac, delete_frac, num_threads);
         r_drive.Drive();
     }
 

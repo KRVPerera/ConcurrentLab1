@@ -16,97 +16,21 @@ using namespace std;
 
 void ReadWriteDriver::Drive() {
 
-    struct timespec t0, t1;
-    unsigned long sec, nsec;
-
-
     int small_sample_size = 10;
     float comp_time;
-
     float mean;
     float sd;
     int req_n;
     bool keep_running = false;
+    vector<float> tot_times;
     do {
-        vector<float> tot_times;
         cout << "Number of samples running : " << small_sample_size << endl;
         for (int i = 0; i < small_sample_size; i++) {
-            int num_insert_f = ceil(num_operations * insert_frac);
-            int num_delete_f = ceil(num_operations * delete_frac);
-            int num_member_f = num_operations - num_insert_f - num_delete_f;
-            if (num_member_f < 0) {
-                cerr << "Invalid number of member calls calculated" << endl;
-                abort();
-            }
-
             ReadWriteList list;
-            vector<int> generatedValues; // used to generate unique values
-            srand(time(NULL));
-            vector<float> times(small_sample_size);
+            std::vector<int> generatedValues;
             populate_list(&list, &generatedValues, num_population);
-
-            for (int j = 0; j < num_operations; j++) { // 10000 operation
-                int randi = rand() % 3;
-                int rand_num = rand() % 65534 + 1;
-                bool present = true;
-                switch (randi) {
-                    case 0:
-                        if (num_insert_f > 0) {
-                            while (present) {
-                                present = false;
-                                rand_num = rand() % 65534 + 1;
-                                for (int k = 0; k < generatedValues.size(); k++) {
-                                    if (generatedValues[k] == rand_num) {
-                                        present = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            GET_TIME(t0);
-                            list.Insert(rand_num);GET_TIME(t1);
-                            generatedValues.push_back(rand_num);
-                            comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-                            times.push_back(comp_time);
-                            num_insert_f--;
-                        }
-                        break;
-                    case 1:
-                        if (num_delete_f > 0) { GET_TIME(t0);
-                            list.Delete(rand_num);GET_TIME(t1);
-                            int delid = -1;
-                            for (int l = 0; l <= generatedValues.size(); l++) {
-                                if (generatedValues[l] == rand_num) {
-                                    delid = l;
-                                    break;
-                                }
-                            }
-                            if (delid != -1) {
-                                generatedValues.erase(generatedValues.begin() + delid);
-                            }
-                            comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-                            times.push_back(comp_time);
-                            num_delete_f--;
-                        }
-                        break;
-                    case 2:
-                        if (num_member_f > 0) { GET_TIME(t0);
-                            list.Member(rand_num);GET_TIME(t1);
-                            comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-                            times.push_back(comp_time);
-                            num_member_f--;
-                        }
-                        break;
-                    default:
-                        cerr << "Invalid random function call" << endl;
-                        break;
-                }
-            }
-            float sum_time = 0;
-            for (int m = 0; m < times.size(); ++m) {
-                sum_time += times[m];
-            }
-            tot_times.push_back(sum_time);
+            comp_time = ThreadCreation(&list);
+            tot_times.push_back(comp_time);
 
         }
         mean = Util::Mean(tot_times);
@@ -142,8 +66,84 @@ void ReadWriteDriver::populate_list(ReadWriteList *list, std::vector<int> *gen, 
     }
 }
 
-ReadWriteDriver::ReadWriteDriver(float member_f, float insert_f, float delete_f) {
+ReadWriteDriver::ReadWriteDriver(float member_f, float insert_f, float delete_f, int thread_cnt) {
     this->member_frac = member_f;
     this->insert_frac = insert_f;
     this->delete_frac = delete_f;
+    this->THREAD_COUNT = thread_cnt;
+}
+
+float ReadWriteDriver::ThreadCreation(ReadWriteList *list) {
+    struct timespec tt0, tt1;
+    unsigned long sec, nsec;
+    float t_comp_time;
+
+    GET_TIME(tt0)
+    pthread_t thread_pool[THREAD_COUNT];
+    thread_data_rw data[THREAD_COUNT];
+    for (int i = 0; i < THREAD_COUNT; ++i) {
+        data[i].tid = i;
+        data[i].insert_f = insert_frac;
+        data[i].del_f = delete_frac;
+        data[i].tot_loc_ops = num_operations / THREAD_COUNT;
+        data[i].list = list;
+        pthread_create(&thread_pool[i], NULL, ReadWriteDriver::work, &data[i]);
+    }
+    for (int i = 0; i < THREAD_COUNT; ++i) {
+        pthread_join(thread_pool[i], NULL);
+    }
+
+    GET_TIME(tt1)
+    t_comp_time = Util::elapsed_time_msec(&tt0, &tt1, &sec, &nsec);
+    cout << "Time spent : " << t_comp_time << endl;
+    return t_comp_time;
+}
+
+void *ReadWriteDriver::work(void *data_p) {
+    thread_data_rw tdata = *((thread_data_rw *) data_p);
+    int tot_local_operations = tdata.tot_loc_ops; // because 10,000 divided by 4 not considering
+    // cases where some counts get rounded and total sum it not equal to THREAD_COUNT
+//    int start = (myid * num_operations)/THREAD_COUNT;
+//    int end = ((myid+1) * num_operations)/THREAD_COUNT;
+    ReadWriteList *list = tdata.list;
+    struct timespec t0, t1;
+    unsigned long sec, nsec;
+    float loc_comp_time = 0;
+
+    int num_insert_f = ceil(tot_local_operations * tdata.insert_f);
+    int num_delete_f = ceil(tot_local_operations * tdata.del_f);
+    int num_member_f = tot_local_operations - num_insert_f - num_delete_f;
+    if (num_member_f < 0) {
+        cerr << "Invalid number of member calls calculated" << endl;
+        abort();
+    }
+
+    for (int i = 0; i < tot_local_operations; ++i) {
+        int randi = rand() % 3;
+        int rand_num = rand() % 65534 + 1;
+        switch (randi) {
+            case 0:
+                if (num_insert_f > 0) {
+                    list->Insert(rand_num);
+                    num_insert_f--;
+                }
+                break;
+            case 1:
+                if (num_delete_f > 0) {
+                    list->Delete(rand_num);
+                    num_delete_f--;
+                }
+                break;
+            case 2:
+                if (num_member_f > 0) {
+                    list->Member(rand_num);
+                    num_member_f--;
+                }
+                break;
+            default:
+                cerr << "Invalid random function call" << endl;
+                break;
+        }
+    }
+    pthread_exit(NULL);
 }

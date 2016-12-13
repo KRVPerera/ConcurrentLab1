@@ -11,14 +11,14 @@
 
 #define MAX_THREADS 4
 
-typedef struct thread_data {
+typedef struct thread_data_m {
     int tid;
     float insert_f;
     float del_f;
     int tot_loc_ops;
     MutexList *list;
 
-} thread_data;
+} thread_data_m;
 
 class MutexDriver {
 private:
