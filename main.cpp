@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 
     if (mutexed) {
         cout << "Mutex\t\t\t   : ON" << endl;
-        MutexDriver m_drive(member_frac, insert_frac, delete_frac);
+        MutexDriver m_drive(member_frac, insert_frac, delete_frac, num_threads);
         m_drive.Drive();
     }
 
