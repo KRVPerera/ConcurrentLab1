@@ -8,16 +8,15 @@
 
 #include <vector>
 #include "MutexList.h"
+#include "Common.h"
 
 #define MAX_THREADS 4
 
 typedef struct thread_data {
     int tid;
-    float insert_f;
-    float del_f;
-    int tot_loc_ops;
+    int num_threads;
     MutexList *list;
-
+    std::vector<Operation> *gen_list;
 } thread_data;
 
 class MutexDriver {
@@ -25,7 +24,7 @@ private:
     float member_frac = 0.50, insert_frac = 0.25, delete_frac = 0.25;
     int num_population = 1000; // n
     int num_operations = 10000; // m
-    int THREAD_COUNT = 2;
+    int thread_count = 2;
 
 //     // used to generate unique values
 public:

@@ -5,6 +5,7 @@
 #include <cmath>
 #include "Util.h"
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 // N = (100zs/rx)^2, r - accuracy (5%), s - standard deviation, x - mean, z = 1.960 (95%) - TAKE THE CEIL
@@ -71,4 +72,90 @@ float Util::elapsed_time_msec(struct timespec *begin, struct timespec *end,
         *sec = end->tv_sec - begin->tv_sec;
     }
     return (float) (*sec) * 1000 + ((float) (*nsec)) / 1000000.0;
+}
+
+void
+Util::populate_list(SerialList *list, vector<Operation> *gen, int population,
+                    int num_ops, int ins_f, int del_f) {
+
+    while (list->Size() < population) {
+        //int number = rand()%65535+1; // (0, 65535) exclusive range
+        int number = rand() % 65534 + 1; // (0, 65535) exclusive range
+        if (list->Member(number)) {
+            continue;
+        }
+        list->Insert(number);
+    }
+
+    int num_insert_f = ins_f;
+    assert(("No Inserts ", num_insert_f > 0));
+    int num_delete_f = del_f;
+    assert(("No Deletes ", num_delete_f > 0));
+    int num_member_f = num_ops - num_insert_f - num_delete_f;
+    if (num_member_f <= 0) {
+        cerr << "Invalid number of member calls calculated" << endl;
+        abort();
+    }
+
+    for (int i = 0; i < num_ops; ++i) {
+        int opNumber = rand() % 65534 + 1;
+        int func = rand() % 3;
+        Operation new_op;
+        new_op.value = opNumber;
+        bool op_fail = false;
+        switch (func) {
+            case 0:
+                if (num_insert_f > 0) {
+                    new_op.op = Op::Insert;
+                    num_insert_f--;
+                    if (!gen->empty()) {
+                        for (int j = gen->size() - 1; j >= 0; --j) {
+                            if (new_op.value == gen->at(j).value) {
+                                if (gen->at(j).op == Op::Insert) {
+                                    op_fail = true;
+                                    num_insert_f++;
+                                    break;
+                                } else if (gen->at(j).op == Op::Delete) {
+                                    op_fail = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    op_fail = true;
+                }
+                break;
+            case 1:
+                if (num_delete_f > 0) {
+                    new_op.op = Op::Delete;
+                    num_delete_f--;
+                    op_fail = false;
+                } else {
+                    op_fail = true;
+                }
+                break;
+            case 2:
+                if (num_member_f > 0) {
+                    new_op.op = Op::Member;
+                    num_member_f--;
+                    op_fail = false;
+                } else {
+                    op_fail = true;
+                }
+                break;
+            default:
+                cerr << "Invalid random function call" << endl;
+                break;
+        }
+
+
+        if (op_fail) {
+            i--;
+        } else {
+            gen->push_back(new_op);
+        }
+    }
+    assert(("Ops length error ", gen->size() == num_ops));
+
 }

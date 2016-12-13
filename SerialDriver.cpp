@@ -5,7 +5,6 @@
 #include <vector>
 #include <cmath>
 #include <random>
-#include <cassert>
 #include "SerialDriver.h"
 #include "Util.h"
 
@@ -39,14 +38,12 @@ void SerialDriver::Drive() {
             srand(time(NULL)); // Change the seed for this sample
             SerialList list;
             vector<Operation> generatedValues; // used to generate unique values
-            populate_list(&list, &generatedValues, num_population, num_operations, num_insert_f, num_delete_f);
+            Util::populate_list(&list, &generatedValues, num_population, num_operations, num_insert_f, num_delete_f);
 
             GET_TIME(t0);
             for (int j = 0; j < num_operations; j++) { // 10000 operation
                 Operation cur_op = generatedValues[j];
                 int val = cur_op.value;
-                Op cur_f = cur_op.op;
-
                 switch (cur_op.op) {
                     case Op::Insert:
                         list.Insert(val);
@@ -83,91 +80,6 @@ void SerialDriver::Drive() {
         tot_times.resize(0);
         tot_times.resize(10);
     } while (keep_running);
-
-}
-
-void
-SerialDriver::populate_list(LinkedList *list, vector<Operation> *gen, int population,
-                            int num_ops, int ins_f, int del_f) {
-    while (list->Size() < population) {
-        //int number = rand()%65535+1; // (0, 65535) exclusive range
-        int number = rand() % 65534 + 1; // (0, 65535) exclusive range
-        if (list->Member(number)) {
-            continue;
-        }
-        list->Insert(number);
-    }
-
-    int num_insert_f = ins_f;
-    assert(("No Inserts ", num_insert_f > 0));
-    int num_delete_f = del_f;
-    assert(("No Deletes ", num_delete_f > 0));
-    int num_member_f = num_ops - num_insert_f - num_delete_f;
-    if (num_member_f <= 0) {
-        cerr << "Invalid number of member calls calculated" << endl;
-        abort();
-    }
-
-    for (int i = 0; i < num_ops; ++i) {
-        int opNumber = rand() % 65534 + 1;
-        int func = rand() % 3;
-        Operation new_op;
-        new_op.value = opNumber;
-        bool op_fail = false;
-        switch (func) {
-            case 0:
-                if (num_insert_f > 0) {
-                    new_op.op = Op::Insert;
-                    num_insert_f--;
-                    if (!gen->empty()) {
-                        for (int j = gen->size() - 1; j >= 0; --j) {
-                            if (new_op.value == gen->at(j).value) {
-                                if (gen->at(j).op == Op::Insert) {
-                                    op_fail = true;
-                                    num_insert_f++;
-                                    break;
-                                } else if (gen->at(j).op == Op::Delete) {
-                                    op_fail = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    op_fail = true;
-                }
-                break;
-            case 1:
-                if (num_delete_f > 0) {
-                    new_op.op = Op::Delete;
-                    num_delete_f--;
-                    op_fail = false;
-                } else {
-                    op_fail = true;
-                }
-                break;
-            case 2:
-                if (num_member_f > 0) {
-                    new_op.op = Op::Member;
-                    num_member_f--;
-                    op_fail = false;
-                } else {
-                    op_fail = true;
-                }
-                break;
-            default:
-                cerr << "Invalid random function call" << endl;
-                break;
-        }
-
-
-        if (op_fail) {
-            i--;
-        } else {
-            gen->push_back(new_op);
-        }
-    }
-    assert(("Ops length error ", gen->size() == num_ops));
 
 }
 
