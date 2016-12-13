@@ -23,10 +23,7 @@ int main(int argc, char **argv) {
     // Argument parser variables
     int c;
     opterr = 0;
-    // Time variables
-    struct timespec t0, t1;
-    float comp_time;
-    unsigned long sec, nsec;
+
     // Multi threading variables
     int num_threads = 2;
     bool serial, mutexed, rwlocked;
@@ -118,15 +115,15 @@ int main(int argc, char **argv) {
     srand(seed); // seed for each iteration , each test use a one seed
     cout << "Population\t\t-n : " << num_population << endl;
     cout << "Operations\t\t-m : " << num_operations << endl;
-    cout << "Member fraction\t   : " << member_frac * 100 << "%" << endl;
-    cout << "Insert fraction\t-i : " << insert_frac * 100 << "%" << endl;
-    cout << "Delete fraction\t-d : " << delete_frac * 100 << "%" << endl;
+    cout << "Member fraction\t\t   : " << member_frac * 100 << "%" << endl;
+    cout << "Insert fraction\t\t-i : " << insert_frac * 100 << "%" << endl;
+    cout << "Delete fraction\t\t-d : " << delete_frac * 100 << "%" << endl;
     cout << "Threads\t\t\t-t : " << num_threads  << endl;
     cout << "Seed\t\t\t   : " << seed  << endl;
 
     if (serial) {
         cout << "Serial\t\t\t   : ON" << endl;
-        SerialDriver s_drive(member_frac, insert_frac, delete_frac);
+        SerialDriver s_drive(member_frac, insert_frac, num_population, num_operations);
         s_drive.Drive();
     }
 

@@ -17,103 +17,59 @@ void SerialDriver::Drive() {
 
     struct timespec t0, t1;
     unsigned long sec, nsec;
-
-
     int small_sample_size = 10;
-    float comp_time;
-
     float mean;
     float sd;
     int req_n;
-    bool keep_running = false;
+    bool keep_running;
+
+    int num_insert_f = ceil(num_operations * insert_frac);
+    int num_delete_f = ceil(num_operations * delete_frac);
+    int num_member_f = num_operations - num_insert_f - num_delete_f;
+    if (num_member_f < 0) {
+        cerr << "Invalid number of member calls calculated" << endl;
+        abort();
+    }
+
     do {
         vector<float> tot_times;
-        cout << "Number of samples running : " << small_sample_size << endl;
+        cout << "Number of samples running  : " << small_sample_size << endl;
         for (int i = 0; i < small_sample_size; i++) {
-            int num_insert_f = ceil(num_operations * insert_frac);
-            int num_delete_f = ceil(num_operations * delete_frac);
-            int num_member_f = num_operations - num_insert_f - num_delete_f;
-            if (num_member_f < 0) {
-                cerr << "Invalid number of member calls calculated" << endl;
-                abort();
-            }
-
+            srand(time(NULL)); // Change the seed for this sample
             SerialList list;
-            vector<int> generatedValues; // used to generate unique values
-            srand(time(NULL));
-            vector<float> times(small_sample_size);
-            populate_list(&list, &generatedValues, num_population);
+            vector<Operation> generatedValues; // used to generate unique values
+            populate_list(&list, &generatedValues, num_population, num_operations, num_insert_f, num_delete_f);
 
+            GET_TIME(t0);
             for (int j = 0; j < num_operations; j++) { // 10000 operation
-                int randi = rand() % 3;
-                int rand_num = rand() % 65534 + 1;
-                bool present = true;
-                switch (randi) {
-                    case 0:
-                        if (num_insert_f > 0) {
-                            while (present) {
-                                present = false;
-                                rand_num = rand() % 65534 + 1;
-                                for (int k = 0; k < generatedValues.size(); k++) {
-                                    if (generatedValues[k] == rand_num) {
-                                        present = true;
-                                        break;
-                                    }
-                                }
-                            }
+                Operation cur_op = generatedValues[j];
+                int val = cur_op.value;
+                Op cur_f = cur_op.op;
 
-                            GET_TIME(t0);
-                            list.Insert(rand_num);GET_TIME(t1);
-                            generatedValues.push_back(rand_num);
-                            comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-                            times.push_back(comp_time);
-                            num_insert_f--;
-                        }
+                switch (cur_op.op) {
+                    case Op::Insert:
+                        list.Insert(val);
                         break;
-                    case 1:
-                        if (num_delete_f > 0) { GET_TIME(t0);
-                            list.Delete(rand_num);GET_TIME(t1);
-                            int delid = -1;
-                            for (int l = 0; l <= generatedValues.size(); l++) {
-                                if (generatedValues[l] == rand_num) {
-                                    delid = l;
-                                    break;
-                                }
-                            }
-                            if (delid != -1) {
-                                generatedValues.erase(generatedValues.begin() + delid);
-                            }
-                            comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-                            times.push_back(comp_time);
-                            num_delete_f--;
-                        }
+                    case Op::Delete:
+                        list.Delete(val);
                         break;
-                    case 2:
-                        if (num_member_f > 0) { GET_TIME(t0);
-                            list.Member(rand_num);GET_TIME(t1);
-                            comp_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
-                            times.push_back(comp_time);
-                            num_member_f--;
-                        }
+                    case Op::Member:
+                        list.Member(val);
                         break;
                     default:
                         cerr << "Invalid random function call" << endl;
                         break;
                 }
-            }
-            float sum_time = 0;
-            for (int m = 0; m < times.size(); ++m) {
-                sum_time += times[m];
-            }
+            }GET_TIME(t1);
+            float sum_time = Util::elapsed_time_msec(&t0, &t1, &sec, &nsec);
             tot_times.push_back(sum_time);
-
         }
         mean = Util::Mean(tot_times);
         sd = Util::StandardDeviation(tot_times);
         req_n = Util::RequiredSampleSize(sd, mean);
-        cout << "Mean\t : " << mean << " ms" << endl;
-        cout << "SD\t\t : " << sd << " ms" << endl;
-        cout << "req N\t : " << req_n << " samples" << endl;
+        cout << "Mean\t\t\t   : " << mean << " ms" << endl;
+        cout << "SD\t\t\t   : " << sd << " ms" << endl;
+        cout << "req N\t\t\t   : " << req_n << " samples" << endl;
         if (req_n > small_sample_size) {
             cerr << "Need to run " << req_n - small_sample_size << " more iterations" << endl;
             cout << "Starting again..." << endl;
@@ -129,7 +85,9 @@ void SerialDriver::Drive() {
 
 }
 
-void SerialDriver::populate_list(SerialList *list, vector<int> *gen, int population) {
+void
+SerialDriver::populate_list(SerialList *list, vector<Operation> *gen, int population,
+                            int num_ops, int ins_f, int del_f) {
     while (list->Size() < population) {
         //int number = rand()%65535+1; // (0, 65535) exclusive range
         int number = rand() % 65534 + 1; // (0, 65535) exclusive range
@@ -137,12 +95,82 @@ void SerialDriver::populate_list(SerialList *list, vector<int> *gen, int populat
             continue;
         }
         list->Insert(number);
-        gen->push_back(number);
+    }
+
+    int num_insert_f = ins_f;
+    int num_delete_f = del_f;
+    int num_member_f = num_ops - num_insert_f - num_delete_f;
+    if (num_member_f < 0) {
+        cerr << "Invalid number of member calls calculated" << endl;
+        abort();
+    }
+
+    for (int i = 0; i < num_ops; ++i) {
+        int opNumber = rand() % 65534 + 1;
+        int func = rand() % 3;
+        Operation new_op;
+        new_op.value = opNumber;
+        bool op_fail = false;
+        switch (func) {
+            case 0:
+                if (num_insert_f > 0) {
+                    new_op.op = Op::Insert;
+                    num_insert_f--;
+                    if (!gen->empty()) {
+                        for (int j = gen->size() - 1; j >= 0; --j) {
+                            if (new_op.value == gen->at(j).value) {
+                                if (gen->at(j).op == Op::Insert) {
+                                    op_fail = true;
+                                    num_insert_f++;
+                                    break;
+                                } else if (gen->at(j).op == Op::Delete) {
+                                    op_fail = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    op_fail = true;
+                }
+                break;
+            case 1:
+                if (num_delete_f > 0) {
+                    new_op.op = Op::Delete;
+                    num_delete_f--;
+                    op_fail = false;
+                } else {
+                    op_fail = true;
+                }
+                break;
+            case 2:
+                if (num_member_f > 0) {
+                    new_op.op = Op::Member;
+                    num_member_f--;
+                    op_fail = false;
+                } else {
+                    op_fail = true;
+                }
+                break;
+            default:
+                cerr << "Invalid random function call" << endl;
+                break;
+        }
+
+
+        if (op_fail) {
+            i--;
+        } else {
+            gen->push_back(new_op);
+        }
     }
 }
 
-SerialDriver::SerialDriver(float member_f, float insert_f, float delete_f) {
+SerialDriver::SerialDriver(float member_f, float insert_f, int pop, int ops) {
     this->member_frac = member_f;
     this->insert_frac = insert_f;
-    this->delete_frac = delete_f;
+    this->delete_frac = 1 - member_f - insert_f;
+    this->num_population = pop;
+    this->num_operations = ops;
 }
+

@@ -55,5 +55,7 @@ int SerialList::Size() {
     return count;
 }
 
+SerialList::~SerialList() {
 
+}
 

@@ -13,6 +13,7 @@ protected:
     Node *Find(int i) override;
 
 public:
+    ~SerialList();
     void Delete (int i) override;
 
     bool Member(int i) override;

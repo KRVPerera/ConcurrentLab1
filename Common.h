@@ -4,15 +4,15 @@
 
 #ifndef CONCURRENTTHLAB_1_COMMON_H
 #define CONCURRENTTHLAB_1_COMMON_H
-
-typedef struct Operation{
-    int value; // value to be used in the operation
-    Op op; // 0 - Insert,
-} Operation;
-
 enum Op {
     Insert,
     Delete,
     Member
 };
+typedef struct Operation {
+    int value; // value to be used in the operation
+    Op op; // 0 - Insert,
+} Operation;
+
+
 #endif //CONCURRENTTHLAB_1_COMMON_H

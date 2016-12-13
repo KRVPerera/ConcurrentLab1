@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "SerialList.h"
+#include "Common.h"
 
 class SerialDriver {
 private:
@@ -16,9 +17,9 @@ private:
 public:
     void Drive();
 
-    SerialDriver(float member_f, float insert_f, float delete_f);
+    SerialDriver(float member_f, float insert_f, int pop, int ops);
 
-    static void populate_list(SerialList *list, std::vector<int> *population, int i);
+    static void populate_list(SerialList *, std::vector<Operation> *, int n_pop, int n_op, int in_f, int d_f);
 };
 
 
