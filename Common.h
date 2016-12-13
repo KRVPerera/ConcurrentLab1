@@ -8,7 +8,7 @@
 typedef struct Operation{
     int value; // value to be used in the operation
     Op op; // 0 - Insert,
-}Operation;
+} Operation;
 
 enum Op {
     Insert,
