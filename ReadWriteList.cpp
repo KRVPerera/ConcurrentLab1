@@ -32,19 +32,16 @@ bool ReadWriteList::Member(int i) {
     return found;
 }
 
-void ReadWriteList::Insert(int i) {
+int ReadWriteList::Insert(int i) {
     pthread_rwlock_wrlock(&glb_rwlock);
-    SerialList::Insert(i);
+    int result = SerialList::Insert(i);
     pthread_rwlock_unlock(&glb_rwlock);
+    return result;
 }
 
-void ReadWriteList::Delete(int i) {
+int ReadWriteList::Delete(int i) {
     pthread_rwlock_wrlock(&glb_rwlock);
-    Node *x = SerialList::Find(i);
-    if (x != nil) {
-        x->prev->next = x->next;
-        x->next->prev = x->prev;
-        delete (x);
-    }
+    int result = SerialList::Delete(i);
     pthread_rwlock_unlock(&glb_rwlock);
+    return result;
 }

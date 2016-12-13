@@ -32,19 +32,16 @@ bool MutexList::Member(int i) {
     return found;
 }
 
-void MutexList::Insert(int i) {
+int MutexList::Insert(int i) {
     pthread_mutex_lock(&glb_mutex);
-    SerialList::Insert(i);
+    int result = SerialList::Insert(i);
     pthread_mutex_unlock(&glb_mutex);
+    return result;
 }
 
-void MutexList::Delete(int i) {
+int MutexList::Delete(int i) {
     pthread_mutex_lock(&glb_mutex);
-    Node *x = SerialList::Find(i);
-    if (x != nil) {
-        x->prev->next = x->next;
-        x->next->prev = x->prev;
-        delete (x);
-    }
+    int result = SerialList::Delete(i);
     pthread_mutex_unlock(&glb_mutex);
+    return result;
 }

@@ -18,8 +18,9 @@ public:
     void Print();
     ~LinkedList ();
 
-    virtual void Delete(int) = 0;
-    virtual void Insert(int) = 0;
+    virtual int Delete(int) = 0;
+
+    virtual int Insert(int) = 0;
     virtual bool Member(int) = 0;
     virtual int Size() = 0;
 };

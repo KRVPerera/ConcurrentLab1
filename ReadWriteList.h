@@ -21,11 +21,11 @@ public:
 
     void Print();
 
-    void Delete(int i) override;
+    int Delete(int i) override;
 
     bool Member(int i) override;
 
-    void Insert(int i) override;
+    int Insert(int i) override;
 
     ~ReadWriteList() ;
 };
