@@ -11,6 +11,16 @@
 
 #define MAX_THREADS 4
 
+typedef struct thread_data {
+    int tid;
+    float mem_f;
+    float insert_f;
+    float del_f;
+    int tot_loc_operations;
+    MutexList *list;
+
+} thread_data;
+
 class MutexDriver {
 private:
     float member_frac = 0.50, insert_frac = 0.25, delete_frac = 0.25;

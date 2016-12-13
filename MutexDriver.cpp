@@ -85,11 +85,16 @@ float MutexDriver::ThreadCreation(MutexList *list) {
     float t_comp_time;GET_TIME(tt0)
     pthread_t thread_pool[THREAD_COUNT];
     int myid[THREAD_COUNT];
+    thread_data data[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; ++i) {
-        myid[i] = i;
-        pthread_create(&thread_pool[i], NULL, MutexDriver::work, list);
+        data[i].tid = i;
+        data[i].insert_f = insert_frac;
+        data[i].del_f = delete_frac;
+        data[i].tot_loc_operations = num_operations / THREAD_COUNT;
+        data[i].mem_f = member_frac;
+        data[i].list = list;
+        pthread_create(&thread_pool[i], NULL, MutexDriver::work, &data[i]);
     }
-
     for (int i = 0; i < THREAD_COUNT; ++i) {
         pthread_join(thread_pool[i], NULL);
     }GET_TIME(tt1)
@@ -99,17 +104,18 @@ float MutexDriver::ThreadCreation(MutexList *list) {
 }
 
 void *MutexDriver::work(void *tid) {
-    MutexList *list = (MutexList *) tid;
+    thread_data tdata = *((thread_data *) tid);
     int tot_local_operations = 10000 / 4; // because 10,000 divided by 4 not considering
     // cases where some counts get rounded and total sum it not equal to THREAD_COUNT
 //    int start = (myid * num_operations)/THREAD_COUNT;
 //    int end = ((myid+1) * num_operations)/THREAD_COUNT;
+    MutexList *list = tdata.list;
     struct timespec t0, t1;
     unsigned long sec, nsec;
     float loc_comp_time = 0;
 
-    int num_insert_f = ceil(tot_local_operations * 0.5);
-    int num_delete_f = ceil(tot_local_operations * 0.25);
+    int num_insert_f = ceil(tot_local_operations * tdata.insert_f);
+    int num_delete_f = ceil(tot_local_operations * tdata.del_f);
     int num_member_f = tot_local_operations - num_insert_f - num_delete_f;
     if (num_member_f < 0) {
         cerr << "Invalid number of member calls calculated" << endl;
