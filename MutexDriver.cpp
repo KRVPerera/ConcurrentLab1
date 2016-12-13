@@ -82,30 +82,32 @@ MutexDriver::MutexDriver(float member_f, float insert_f, float delete_f, int thr
 float MutexDriver::ThreadCreation(MutexList *list) {
     struct timespec tt0, tt1;
     unsigned long sec, nsec;
-    float t_comp_time;GET_TIME(tt0)
+    float t_comp_time;
+
+    GET_TIME(tt0)
     pthread_t thread_pool[THREAD_COUNT];
-    int myid[THREAD_COUNT];
     thread_data data[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; ++i) {
         data[i].tid = i;
         data[i].insert_f = insert_frac;
         data[i].del_f = delete_frac;
-        data[i].tot_loc_operations = num_operations / THREAD_COUNT;
-        data[i].mem_f = member_frac;
+        data[i].tot_loc_ops = num_operations / THREAD_COUNT;
         data[i].list = list;
         pthread_create(&thread_pool[i], NULL, MutexDriver::work, &data[i]);
     }
     for (int i = 0; i < THREAD_COUNT; ++i) {
         pthread_join(thread_pool[i], NULL);
-    }GET_TIME(tt1)
+    }
+
+    GET_TIME(tt1)
     t_comp_time = Util::elapsed_time_msec(&tt0, &tt1, &sec, &nsec);
     cout << "Time spent : " << t_comp_time << endl;
     return t_comp_time;
 }
 
-void *MutexDriver::work(void *tid) {
-    thread_data tdata = *((thread_data *) tid);
-    int tot_local_operations = 10000 / 4; // because 10,000 divided by 4 not considering
+void *MutexDriver::work(void *data_p) {
+    thread_data tdata = *((thread_data *) data_p);
+    int tot_local_operations = tdata.tot_loc_ops; // because 10,000 divided by 4 not considering
     // cases where some counts get rounded and total sum it not equal to THREAD_COUNT
 //    int start = (myid * num_operations)/THREAD_COUNT;
 //    int end = ((myid+1) * num_operations)/THREAD_COUNT;

@@ -13,10 +13,9 @@
 
 typedef struct thread_data {
     int tid;
-    float mem_f;
     float insert_f;
     float del_f;
-    int tot_loc_operations;
+    int tot_loc_ops;
     MutexList *list;
 
 } thread_data;
