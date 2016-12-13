@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <random>
+#include <cassert>
 #include "SerialDriver.h"
 #include "Util.h"
 
@@ -86,7 +87,7 @@ void SerialDriver::Drive() {
 }
 
 void
-SerialDriver::populate_list(SerialList *list, vector<Operation> *gen, int population,
+SerialDriver::populate_list(LinkedList *list, vector<Operation> *gen, int population,
                             int num_ops, int ins_f, int del_f) {
     while (list->Size() < population) {
         //int number = rand()%65535+1; // (0, 65535) exclusive range
@@ -98,9 +99,11 @@ SerialDriver::populate_list(SerialList *list, vector<Operation> *gen, int popula
     }
 
     int num_insert_f = ins_f;
+    assert(("No Inserts ", num_insert_f > 0));
     int num_delete_f = del_f;
+    assert(("No Deletes ", num_delete_f > 0));
     int num_member_f = num_ops - num_insert_f - num_delete_f;
-    if (num_member_f < 0) {
+    if (num_member_f <= 0) {
         cerr << "Invalid number of member calls calculated" << endl;
         abort();
     }
@@ -164,6 +167,8 @@ SerialDriver::populate_list(SerialList *list, vector<Operation> *gen, int popula
             gen->push_back(new_op);
         }
     }
+    assert(("Ops length error ", gen->size() == num_ops));
+
 }
 
 SerialDriver::SerialDriver(float member_f, float insert_f, int pop, int ops) {

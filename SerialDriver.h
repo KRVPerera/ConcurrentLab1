@@ -19,7 +19,7 @@ public:
 
     SerialDriver(float member_f, float insert_f, int pop, int ops);
 
-    static void populate_list(SerialList *, std::vector<Operation> *, int n_pop, int n_op, int in_f, int d_f);
+    static void populate_list(LinkedList *, std::vector<Operation> *, int n_pop, int n_op, int in_f, int d_f);
 };
 
 
