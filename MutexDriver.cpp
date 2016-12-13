@@ -24,7 +24,7 @@ void MutexDriver::Drive() {
     vector<float> tot_times;
     do {
 
-        cout << "Number of samples running : " << small_sample_size << endl;
+        cout << "Number of samples running  : " << small_sample_size << endl;
         for (int i = 0; i < small_sample_size; i++) {
             MutexList list;
             comp_time = ThreadCreation(&list);
@@ -33,9 +33,9 @@ void MutexDriver::Drive() {
         mean = Util::Mean(tot_times);
         sd = Util::StandardDeviation(tot_times);
         req_n = Util::RequiredSampleSize(sd, mean);
-        cout << "Mean\t : " << mean << " ms" << endl;
-        cout << "SD\t\t : " << sd << " ms" << endl;
-        cout << "req N\t : " << req_n << " samples" << endl;
+        cout << "Mean\t\t\t   : " << mean << " ms" << endl;
+        cout << "SD\t\t\t   : " << sd << " ms" << endl;
+        cout << "req N\t\t\t   : " << req_n << " samples" << endl;
         if (req_n > small_sample_size) {
             cerr << "Need to run " << req_n - small_sample_size << " more iterations" << endl;
             cout << "Starting again..." << endl;
