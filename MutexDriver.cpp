@@ -51,19 +51,6 @@ void MutexDriver::Drive() {
 
 }
 
-
-void MutexDriver::populate_list(MutexList *list, std::vector<int> *gen, int population) {
-    while (list->Size() < population) {
-        //int number = rand()%65535+1; // (0, 65535) exclusive range
-        int number = rand() % 65534 + 1; // (0, 65535) exclusive range
-        if (list->Member(number)) {
-            continue;
-        }
-        list->Insert(number);
-        gen->push_back(number);
-    }
-}
-
 MutexDriver::MutexDriver(float member_f, float insert_f, float delete_f, int thread_cnt) {
     this->member_frac = member_f;
     this->insert_frac = insert_f;
@@ -74,7 +61,6 @@ MutexDriver::MutexDriver(float member_f, float insert_f, float delete_f, int thr
         thread_count = 4;
     }
 }
-
 
 float MutexDriver::ThreadCreation(MutexList *list) {
     struct timespec tt0, tt1;
@@ -110,7 +96,6 @@ float MutexDriver::ThreadCreation(MutexList *list) {
     GET_TIME(tt1)
 
     t_comp_time = Util::elapsed_time_msec(&tt0, &tt1, &sec, &nsec);
-//    cout << "Time spent : " << t_comp_time << endl;
     return t_comp_time;
 }
 
@@ -122,7 +107,10 @@ void *MutexDriver::work(void *data_p) {
     vector<Operation> *gen_l = t_data.gen_list;
     int start = (my_id * op_size) / thread_cnt;
     int end = ((my_id + 1) * op_size) / thread_cnt;
-//    cout << "start : " << start << " end : " << end;
+    if (my_id == thread_cnt - 1) {
+        end = op_size;
+    }
+    cout << "I am " << my_id << " Start : " << start << " End : " << end << endl;
     MutexList *list = t_data.list;
 
     for (int i = start; i < end; ++i) {
