@@ -81,15 +81,21 @@ int main(int argc, char **argv) {
                 rwlocked = true;
                 break;
             case 'h':
-                cout << "-s\t\t\t-\trun the serial version" << endl;
-                cout << "-g\t\t\t-\trun the mutex version" << endl;
-                cout << "-r\t\t\t-\trun the read write lock version" << endl;
-                cout << "-t n\t\t-\tn will be the number of threads" << endl;
-                cout << "-n n\t\t-\tn population size default '1000'" << endl;
+                cout << "-s\t\t\t-\trun the serial version. eg: -s" << endl;
+                cout << "-g\t\t\t-\trun the mutex version. eg : -g" << endl;
+                cout << "-r\t\t\t-\trun the read write lock version. eg: -r" << endl;
+                cout << "-t n\t\t-\tn will be the number of threads, defaulis 2. eg: -t 4" << endl;
+                cout << "-n n\t\t-\tn population size default '1000', eg : -n 1000" << endl;
                 cout << "-m n\t\t-\tn number of operations default is '10,000' eg : -m 10000" << endl;
                 cout << "-i n\t\t-\tChange insert fraction <float> eg : -i 0.50" << endl;
                 cout << "-d n\t\t-\tChange delete fraction <float> eg : -d 0.50" << endl;
-                cout << "-h n\t\t-\tShow this menu" << endl;
+                cout << "-h\t\t\t-\tShow this menu" << endl;
+                cout << "NOTE : Member fraction is automatically calculated by the insert and delete fractions" << endl;
+                cout << "example for the assignment." << endl;
+                cout << "eg : ./ConcurrentLab1 -s" << endl;
+                cout << "eg : ./ConcurrentLab1 -g -t 2" << endl;
+                cout << "eg : ./ConcurrentLab1 -r -t 2" << endl;
+                cout << "\a" << endl;
                 break;
             case '?':
                 if (optopt == 'i') {
@@ -129,8 +135,8 @@ int main(int argc, char **argv) {
     cout << "Member fraction\t\t   : " << member_frac * 100 << "%" << endl;
     cout << "Insert fraction\t\t-i : " << insert_frac * 100 << "%" << endl;
     cout << "Delete fraction\t\t-d : " << delete_frac * 100 << "%" << endl;
-    cout << "Threads\t\t\t-t : " << num_threads  << endl;
-    cout << "Seed\t\t\t   : " << seed  << endl;
+    cout << "Threads\t\t\t-t : " << num_threads << endl;
+    cout << "Seed\t\t\t   : " << seed << endl;
 
     if (serial) {
         cout << "Serial\t\t\t   : ON" << endl;
