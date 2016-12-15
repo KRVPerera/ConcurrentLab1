@@ -110,7 +110,6 @@ void *MutexDriver::work(void *data_p) {
     if (my_id == thread_cnt - 1) {
         end = op_size;
     }
-    cout << "I am " << my_id << " Start : " << start << " End : " << end << endl;
     MutexList *list = t_data.list;
 
     for (int i = start; i < end; ++i) {

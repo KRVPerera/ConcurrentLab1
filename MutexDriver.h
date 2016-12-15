@@ -32,8 +32,6 @@ public:
 
     MutexDriver(float member_f, float insert_f, float delete_f, int thread_count);
 
-    static void populate_list(MutexList *list, std::vector<int> *population, int i);
-
     float ThreadCreation(MutexList *list);
 
     static void *work(void *tid);
