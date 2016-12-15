@@ -3,16 +3,16 @@
 
 Idea of the lab is to create three different implementations of a linked list. 
 + Serial version
-+ Verion with a mutex for the whole list
++ Version with a mutex for the whole list
 + Read-Write lock version
 
-Each one will default run and gather 100 samples and using standard deviation and mean decide how many
+Uses `pthread.h` for thread creation and mutual exclusion. Each run will default run with 2 thread if parallel version and gather 100 samples and using standard deviation and mean decide how many
 test cases needed to be sampled to get an accuracy of 5% and 95% confidence interval. If it is
 larger than 100, program will automatically rerun for the desired number of times until it reaches 5% accuracy and 95% confidence level.
 ###Building the Project
 Create a folder inside the project. eg : build. Then within the folder
 run `cmake ..`, In linux this will usually create a Makefile to compile the project. 
-You can run make within the folder to build the project.
+You can run `make` within the folder to build the project.
 
 ###Command line arguments
 After building it will create a executable named "ConcurrentTHLab_1".
