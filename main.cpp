@@ -92,9 +92,9 @@ int main(int argc, char **argv) {
                 cout << "-h\t\t\t-\tShow this menu" << endl;
                 cout << "NOTE : Member fraction is automatically calculated by the insert and delete fractions" << endl;
                 cout << "example for the assignment." << endl;
-                cout << "eg : ./ConcurrentLab1 -s" << endl;
-                cout << "eg : ./ConcurrentLab1 -g -t 2" << endl;
-                cout << "eg : ./ConcurrentLab1 -r -t 2" << endl;
+                cout << "eg : ./ConcurrentTHLab_1 -s" << endl;
+                cout << "eg : ./ConcurrentTHLab_1 -g -t 2" << endl;
+                cout << "eg : ./ConcurrentTHLab_1 -r -t 2" << endl;
                 cout << "\a" << endl;
                 break;
             case '?':
