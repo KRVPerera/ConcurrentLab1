@@ -15,7 +15,7 @@ using namespace std;
 
 void MutexDriver::Drive() {
 
-    int small_sample_size = 10;
+    int small_sample_size = 100;
     float comp_time;
     float mean;
     float sd;

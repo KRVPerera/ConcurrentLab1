@@ -17,7 +17,7 @@ void SerialDriver::Drive() {
 
     struct timespec t0, t1;
     unsigned long sec, nsec;
-    int small_sample_size = 10;
+    int small_sample_size = 100;
     float mean;
     float sd;
     int req_n;
