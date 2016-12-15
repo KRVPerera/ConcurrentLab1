@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     bool serial, mutexed, rwlocked;
     serial = mutexed = rwlocked = false;
     // Reading command line arguments
-    while ((c = getopt(argc, argv, "n:m:i:d:t:sgr")) != -1) {
+    while ((c = getopt(argc, argv, "n:m:i:d:t:sgrh")) != -1) {
         switch (c) {
             case 'n':
                 try {
@@ -79,6 +79,17 @@ int main(int argc, char **argv) {
                 break;
             case 'r':
                 rwlocked = true;
+                break;
+            case 'h':
+                cout << "-s\t\t\t-\trun the serial version" << endl;
+                cout << "-g\t\t\t-\trun the mutex version" << endl;
+                cout << "-r\t\t\t-\trun the read write lock version" << endl;
+                cout << "-t n\t\t-\tn will be the number of threads" << endl;
+                cout << "-n n\t\t-\tn population size default '1000'" << endl;
+                cout << "-m n\t\t-\tn number of operations default is '10,000' eg : -m 10000" << endl;
+                cout << "-i n\t\t-\tChange insert fraction <float> eg : -i 0.50" << endl;
+                cout << "-d n\t\t-\tChange delete fraction <float> eg : -d 0.50" << endl;
+                cout << "-h n\t\t-\tShow this menu" << endl;
                 break;
             case '?':
                 if (optopt == 'i') {

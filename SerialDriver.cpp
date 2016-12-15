@@ -36,10 +36,9 @@ void SerialDriver::Drive() {
         cout << "Number of samples running  : " << small_sample_size << endl;
         for (int i = 0; i < small_sample_size; i++) {
             srand(time(NULL)); // Change the seed for this sample
-            SerialList list;
             vector<Operation> generatedValues; // used to generate unique values
+            SerialList list;
             Util::populate_list(&list, &generatedValues, num_population, num_operations, num_insert_f, num_delete_f);
-
             GET_TIME(t0);
             for (int j = 0; j < num_operations; j++) { // 10000 operation
                 Operation cur_op = generatedValues[j];
@@ -67,6 +66,7 @@ void SerialDriver::Drive() {
         req_n = Util::RequiredSampleSize(sd, mean);
         cout << "Mean\t\t\t   : " << mean << " ms" << endl;
         cout << "SD\t\t\t   : " << sd << " ms" << endl;
+        cout << "Range\t\t\t   : " << mean - sd << " - " << mean + sd << endl;
         cout << "req N\t\t\t   : " << req_n << " samples" << endl;
         if (req_n > small_sample_size) {
             cerr << "Need to run " << req_n - small_sample_size << " more iterations" << endl;
