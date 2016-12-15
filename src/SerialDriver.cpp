@@ -5,8 +5,8 @@
 #include <vector>
 #include <cmath>
 #include <random>
-#include "SerialDriver.h"
-#include "Util.h"
+#include "../include/SerialDriver.h"
+#include "../include/Util.h"
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 // Created by krv on 12/10/16.
 //
 
-#include "MutexList.h"
+#include "../include/MutexList.h"
 
 MutexList::MutexList() : SerialList() {
     pthread_mutex_init(&glb_mutex, NULL);

@@ -2,7 +2,7 @@
 // Created by damith on 12/12/16.
 //
 
-#include "ReadWriteList.h"
+#include "../include/ReadWriteList.h"
 
 ReadWriteList::ReadWriteList() : SerialList() {
     pthread_rwlock_init(&glb_rwlock, NULL);

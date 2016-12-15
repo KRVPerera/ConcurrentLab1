@@ -2,12 +2,12 @@
 // Created by damith on 12/12/16.
 //
 
-#include "ReadWriteList.h"
-#include "ReadWriteDriver.h"
+#include "../include/ReadWriteList.h"
+#include "../include/ReadWriteDriver.h"
 
 #include <cmath>
 #include <random>
-#include "Util.h"
+#include "../include/Util.h"
 
 using namespace std;
 

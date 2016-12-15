@@ -2,7 +2,7 @@
 // Created by root on 12/6/16.
 //
 
-#include "LinkedList.h"
+#include "../include/LinkedList.h"
 
 LinkedList::LinkedList(){
     nil = new Node;

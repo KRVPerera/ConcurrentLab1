@@ -2,7 +2,7 @@
 // Created by root on 12/6/16.
 //
 
-#include "SerialList.h"
+#include "../include/SerialList.h"
 
 SerialList::SerialList() : LinkedList() {}
 

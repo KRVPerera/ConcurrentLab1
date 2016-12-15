@@ -1,9 +1,9 @@
 #include <iostream>
 #include <unistd.h>
 #include <random>
-#include "SerialDriver.h"
-#include "MutexDriver.h"
-#include "ReadWriteDriver.h"
+#include "../include/SerialDriver.h"
+#include "../include/MutexDriver.h"
+#include "../include/ReadWriteDriver.h"
 
 using namespace std;
 

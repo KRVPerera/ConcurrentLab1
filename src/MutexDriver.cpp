@@ -2,11 +2,11 @@
 // Created by krv on 12/11/16.
 //
 
-#include "MutexList.h"
-#include "MutexDriver.h"
+#include "../include/MutexList.h"
+#include "../include/MutexDriver.h"
 #include <cmath>
 #include <random>
-#include "Util.h"
+#include "../include/Util.h"
 
 using namespace std;
 
