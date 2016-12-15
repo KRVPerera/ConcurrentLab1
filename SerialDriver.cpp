@@ -35,7 +35,7 @@ void SerialDriver::Drive() {
         vector<float> tot_times;
         cout << "Number of samples running  : " << small_sample_size << endl;
         for (int i = 0; i < small_sample_size; i++) {
-            srand(time(NULL)); // Change the seed for this sample
+            // Change the seed for this sample
             vector<Operation> generatedValues; // used to generate unique values
             SerialList list;
             Util::populate_list(&list, &generatedValues, num_population, num_operations, num_insert_f, num_delete_f);

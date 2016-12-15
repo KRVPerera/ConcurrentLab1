@@ -77,7 +77,7 @@ float Util::elapsed_time_msec(struct timespec *begin, struct timespec *end,
 void
 Util::populate_list(SerialList *list, vector<Operation> *gen, int population,
                     int num_ops, int ins_f, int del_f) {
-
+    srand(time(NULL));
     while (list->Size() < population) {
         //int number = rand()%65535+1; // (0, 65535) exclusive range
         int number = rand() % 65534 + 1; // (0, 65535) exclusive range
