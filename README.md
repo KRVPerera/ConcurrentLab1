@@ -30,7 +30,7 @@ You can run it and get the help list for the command line arguments by,
 | -n N     | will change the population size of initial list    |
 | -m N     | will change the number of total operations         |
 
-default values are, number of threads 2, insert fraction 0.99, delete
-fractions are 0.005, membership fraction will be calculated automatically.
+default values are, number of threads 2, insert fraction 0.50, delete
+fractions are 0.25, membership fraction will be calculated automatically.
 Population size is 1000 and total number of operations is 10,000.
 
